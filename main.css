@@ -2,7 +2,7 @@ abbr {
 	border-bottom: none !important;
 }
 
-footer{
+footer {
 	background-repeat: no-repeat;
 	background-position: right;
 	font-size: small;
@@ -35,5 +35,5 @@ input[type="number"] {
 }
 
 .raritySize {
-	width: 100px;
+	width: 100px !important;
 }
