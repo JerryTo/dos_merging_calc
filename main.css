@@ -1,0 +1,39 @@
+abbr {
+	border-bottom: none !important;
+}
+
+footer{
+	background-repeat: no-repeat;
+	background-position: right;
+	font-size: small;
+	left: 0px;
+	bottom: 0px;
+	height: 50px;
+	width:100%;
+	text-align: center;
+	padding-top: 10px;
+}
+
+input[type="number"] {
+	width: 40px;
+}
+
+.costSize {
+	width: 70px;
+}
+
+.inputField {
+	width: 130px;
+}
+
+.inputFieldSmall {
+	width: 100px;
+}
+
+.labelPadding {
+	padding: 0px 20px;
+}
+
+.raritySize {
+	width: 100px;
+}
