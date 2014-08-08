@@ -7,15 +7,20 @@
 	 - Cleanup of code
 */
 
+var error = false;
+
 function calculate() {
 	$(".alert").alert('close'); // Closes any existing alerts
+	error = false;
+	
     var baseLevel = parseInt($("#baselv").val());
 	var basePercent = $("#basePercent").val();
     var baseEXP = 0;
 	
 	/* Error Handling */
 	if ($.isNumeric(baseLevel) === false) {
-		$("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button><strong>Warning!</strong> Please enter a numeric value.</div>").insertAfter("#header");
+		$("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button><strong>Warning!</strong> Please enter a numeric value in the Level field.</div>").insertAfter("#header");
+		error = true;
 		return;
 	}
 	
@@ -90,6 +95,18 @@ $(function() {
 });
 
 function expGain(cost, rarity, enhancerIndex) {
+	if (rarity != "NA" && isNaN(cost) && error === false) { 
+		cost = 0;
+		$("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button><strong>Warning!</strong> Please enter the missing cost for the enhancer spirit.</div>").insertAfter("#header");
+		error = true;
+		return cost;
+	}
+	if (rarity === "NA" && !isNaN(cost) && error === false) { 
+		cost = 0;
+		$("<div class='alert alert-warning alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert'><span aria-hidden='true'>&times;</span><span class='sr-only'>Close</span></button><strong>Warning!</strong> Please enter the missing rarity for the enhancer spirit.</div>").insertAfter("#header");
+		error = true;
+		return cost;
+	}
     switch (rarity) {
 		case "C":
 			return lvMultiplier(cost*100, enhancerIndex);
@@ -123,10 +140,14 @@ function clear() {
 	$('input').val('');
 	$('select').val('NA');
 	$(".alert").alert('close');
+	error = false;
     $("#totalEXPGain").text("");
     $("#newLevel").text("");
     $("#leftoverEXP").text("");
 	$("#sPoint").text("");
+	for (k = 1; k < 6; k++) {
+		restoreAll("#e" + k, "", true);
+	}
 }
 
 /* When option is selected, remove inapplicable fields */
@@ -134,6 +155,18 @@ $("select").change(function() {
 	var coID = "#" + $(this).attr('id').substr(0,3) + "cost";
 	var raID = "#" + $(this).attr('id').substr(0,3) + "rarity";
 	var selectedOption = $(this).val();
+	
+	if ($(coID).val() != "NA" && $(raID).val() != "NA") {
+		var tempValue1 = $(coID).val();
+		var tempValue2 = $(raID).val();
+		mergeCost();
+		restoreAll(coID, selectedOption, true);
+		var tempValue3 = coID + ' option[value="' + tempValue1 +'"]';
+		$(tempValue3).prop("selected", true);
+		tempValue3 = raID + ' option[value="' + tempValue2 +'"]';
+		$(tempValue3).prop("selected", true);
+		return;
+	}
 	if ($(this).attr('id').substr(-4,4) === "cost") {
 		if ($(raID).val() === "NA") {
 			var costId = "#" + $(this).attr('id');
@@ -169,17 +202,48 @@ function costRemoval(rarityID) {
 	}
 }
 
-function restoreAll(id, selectedOption) {
+function restoreAll(id, selectedOption, all) {
 	var costValues = ["1.0", "1.5", "2.0", "2.5", "3.0", "3.5", "4.0", "4.5", "5.0"];
 	var rarityValues = ["C", "UC", "R", "SR", "Prince", "Queen"];
-	var remove = costValues;
+	if (id.substr(-4,4) === "cost") {
+		var remove = rarityValues;
+	}
+	else { var remove = costValues; }
 	var removeID = id.substr(0,3) + "_cost";
+	
+	/* If all, removes and restores all options */
+	if (all === true) {
+		removeID = id.substr(0,3) + "_cost";
+		remove = costValues;
+		for (i = 0; i < remove.length; i++) {
+			var tempStr = removeID + " option[value='" + remove[i] + "']";
+			$(tempStr).remove();
+		}
+		
+		for (j = 0; j < remove.length; j++) {
+			var tempStr = '<option value="' + remove[j] + '">' + remove[j] + '</option> ';
+			$(removeID).append(tempStr);
+		}
+		
+		removeID = id.substr(0,3) + "_rarity";
+		remove = rarityValues;
+		for (i = 0; i < remove.length; i++) {
+			var tempStr = removeID + " option[value='" + remove[i] + "']";
+			$(tempStr).remove();
+		}
+		
+		for (j = 0; j < remove.length; j++) {
+			var tempStr = '<option value="' + remove[j] + '">' + remove[j] + '</option> ';
+			$(removeID).append(tempStr);
+		}
+		return true;
+	}
 	
 	if (jQuery.inArray( selectedOption, costValues ) != -1) {
 		remove = rarityValues;
 		removeID = id.substr(0,3) + "_rarity";
 	}
-
+	
 	/* Removes all select options of enhancer (Except NA) */
 	for (i = 0; i < remove.length; i++) {
 	
