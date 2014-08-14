@@ -14,16 +14,12 @@ footer {
 	padding-top: 10px;
 }
 
-input[type="number"] {
-	width: 40px;
-}
-
 .costSize {
 	width: 70px;
 }
 
 .inputField {
-	width: 130px;
+	width: 165px;
 }
 
 .inputFieldSmall {
