@@ -5,6 +5,7 @@
 	TODO:
 	 - Add LVs to Enhancer Spirits
 	 - Cleanup of code
+	 
 */
 
 var error = false;
@@ -107,15 +108,40 @@ function expGain(cost, rarity, enhancerIndex) {
 		error = true;
 		return cost;
 	}
+
+	var tempString1 = "#e" + i + "_lv";
+	var tempString2 = "#e" + i + "_lv_percent";
+	
+	var enhancerLevel = parseInt($(tempString1).val());
+	if (isNaN(enhancerLevel)) { enhancerLevel = 1; }
+	console.log("enhancerLevel: " + enhancerLevel);
+	
+	var enhancerPercent = parseInt($(tempString2).val());
+	if (isNaN(enhancerPercent)) { enhancerPercent = 0; }
+	console.log("enhancerPercent: " + enhancerPercent);
+    var enhancerEXP = 0;
+	
+	/* Pre-merge EXP */
+    for (p = 1; p <= enhancerLevel; p++) {
+        if (p === 1) { enhancerEXP = 0; }
+        else { enhancerEXP = enhancerEXP + (100 + (40*(p-2))); }
+    }
+	console.log("enhancerEXP: " + enhancerEXP);
+	
+    /* EXP needed for 1 LV up */
+    var enhancerExpNeeded = (100 + (40*(enhancerLevel-1)));
+	
+    enhancerEXP = Math.round(enhancerEXP + (enhancerExpNeeded * (enhancerPercent/100)));
+	
     switch (rarity) {
 		case "C":
-			return lvMultiplier(cost*100, enhancerIndex);
+			return ((cost*100) + (enhancerEXP * 0.3));
 		case "UC":
-			return lvMultiplier(cost*200, enhancerIndex);
+			return ((cost*200) + (enhancerEXP * 0.3));
 		case "R":
-			return lvMultiplier(cost*300, enhancerIndex);
+			return ((cost*300) + (enhancerEXP * 0.3));
 		case "SR":
-			return lvMultiplier(cost*400, enhancerIndex);
+			return ((cost*400) + (enhancerEXP * 0.3));
 		case "Prince":
 			return 1500;
 		case "Queen":
@@ -123,17 +149,6 @@ function expGain(cost, rarity, enhancerIndex) {
 		default:
 			return 0;
 	}
-}
-
-/* Work in progress */
-function lvMultiplier(exp, enhancerIndex) {
-	var str3 = "#e" + enhancerIndex + "_lv";
-	var enhancerLevel = $(str3).val();
-	if (enhancerLevel === "") { enhancerLevel = 1; } // If enhancer level is empty, assume it's LV 1
-	for (j = 1; j < enhancerLevel; j++) {
-		exp = exp * 1.3;
-	}
-	return exp;
 }
 
 function clear() {
@@ -315,7 +330,9 @@ function mergeCost() {
 		str = "#e" + i + "_rarity";
 		if ($(str).val() != "NA") { j++; }
 	}
-	var cost = ((10 * parseInt($("#baselv").val()) + 90) * j);
+	if (parseInt($("#baselv").val()) < 30) { var cost = ((10 * parseInt($("#baselv").val()) + 90) * j); }
+	else { var cost = ((20 * parseInt($("#baselv").val()) - 200) * j); }
+	
 	if (isNaN(cost)) { cost = 0; }
 	$("#sPoint").text(cost);
 }
