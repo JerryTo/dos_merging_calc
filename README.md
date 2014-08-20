@@ -3,7 +3,7 @@ Destiny of Spirits: Merging Calculator
 
 Destiny of Spirits: Merging Calculator is an application that calculates the amount of EXP gained from merging Enhancer Spirits into a Base Spirit. As Destiny of Spirits does not display the amount of EXP that would be gained from merging, this application provides its users with the opportunity to merge spirits more efficiently.
 
-[The application can be used here.](jerryto.github.io/dos_merging_calc)
+[The application can be used here.](http://jerryto.github.io/dos_merging_calc)
 
 ##Usage
 
