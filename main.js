@@ -1,10 +1,11 @@
 /* 
 	Destiny of Spirits - Merging Calculator
 	Created by: Jerry To
+	Last Updated: 8/31/2014
 	
 	TODO:
-	 - Add LVs to Enhancer Spirits
-	 - Cleanup of code
+	 - Bonus Stats
+	 - Clean-up/Optimization of code
 	 
 */
 
@@ -145,7 +146,7 @@ function expGain(cost, rarity, enhancerIndex) {
 		case "Prince":
 			return 1500;
 		case "Queen":
-			return 3500;
+			return 3000;
 		default:
 			return 0;
 	}
